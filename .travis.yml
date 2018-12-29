@@ -1,0 +1,22 @@
+sudo: required
+service: 
+  - docker
+
+before_install:
+  - docker build -t aqyakush/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run aqyakush/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t aqyakush/multi-client ./client
+  - docker build -t aqyakush/multi-nginx ./nginx
+  - docker build -t aqyakush/multi-server ./server
+  - docker build -t aqyakush/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push aqyakush/multi-client
+  - docker push aqyakush/multi-nginx 
+  - docker push aqyakush/multi-server
+  - docker push aqyakush/multi-worker
