@@ -1,5 +1,0 @@
-postgrespassword
-
-postgres
-
-databasename: fibvalues
